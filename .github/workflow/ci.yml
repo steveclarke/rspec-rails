@@ -1,0 +1,51 @@
+name: RSpec CI
+on: [pull_request, push]
+jobs:
+  test:
+    name: Ruby ${{ matrix.ruby }}
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+       include:
+         # Rails 6.0 builds >= 2.5.0
+         - ruby: jruby-head
+           env:
+             RAILS_VERSION: '~> 6.0.0'
+             JRUBY_OPT: --dev
+             JAVA_OPTS: "--add-opens java.base/sun.nio.ch=org.jruby.dist --add-opens java.base/java.io=org.jruby.dist --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.security.cert=ALL-UNNAMED --add-opens=java.base/java.util.zip=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.util.regex=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/javax.crypto=ALL-UNNAMED --add-opens=java.management/sun.management=ALL-UNNAMED"
+         - ruby: ruby-3.0.0-preview1
+           env:
+             RAILS_VERSION: '~> 6.0.0'
+            # allow_failure: true
+         - ruby: 2.7
+           env:
+             RAILS_VERSION: '~> 6.0.0'
+         - ruby: 2.6
+           env:
+             RAILS_VERSION: '~> 6.0.0'
+         - ruby: 2.5
+           env:
+             RAILS_VERSION: '~> 6.0.0'
+
+        fail-fast: false
+    continue-on-error: ${{ matrix.ruby == 'ruby-3.0.0-preview1' || endsWith(matrix.ruby, 'head') }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - uses: actions/cache@v2
+        with:
+          path: ../bundle
+          key: ${{ runner.os }}-${{ matrix.ruby }}
+      - run: script/install_chrome_driver
+      - run: script/update_rubygems_and_install_bundler
+      - run: script/clone_all_rspec_repos
+      - run: bundle install --binstubs --standalone
+        env: ${{ matrix.env }}
+        # Rails 4+ complains with a bundler rails binstub in PROJECT_ROOT/bin/
+      - run: rm -f bin/rails && bundle exec rails --version
+        env: ${{ matrix.env }}
+      - run: script/run_build
+        env: ${{ matrix.env }}
