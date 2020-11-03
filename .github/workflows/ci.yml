@@ -41,10 +41,10 @@ jobs:
       # - run: script/install_chrome_driver
       - run: script/update_rubygems_and_install_bundler
       - run: script/clone_all_rspec_repos
-      - run: bundle install --binstubs --standalone
-        env: ${{ matrix.env }}
+      # - run: bundle install --binstubs --standalone
+        # env: ${{ matrix.env }}
         # Rails 4+ complains with a bundler rails binstub in PROJECT_ROOT/bin/
-      - run: rm -f bin/rails && bundle exec rails --version
-        env: ${{ matrix.env }}
-      - run: script/run_build
+      # - run: rm -f bin/rails && bundle exec rails --version
+        # env: ${{ matrix.env }}
+      - run: bundle install --binstubs --standalone && script/run_build
         env: ${{ matrix.env }}
