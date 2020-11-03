@@ -101,3 +101,8 @@ matrix:
       env: RAILS_VERSION='~> 5.0.0'
 
   fast_finish: true
+
+branches:
+  only:
+    - master
+    - /^\d+-\d+-maintenance$/
