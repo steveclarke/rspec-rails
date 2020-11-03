@@ -5,6 +5,7 @@ jobs:
     name: Ruby ${{ matrix.ruby }}
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
        include:
          # Rails 6.0 builds >= 2.5.0
@@ -26,8 +27,6 @@ jobs:
          - ruby: 2.5
            env:
              RAILS_VERSION: '~> 6.0.0'
-
-        fail-fast: false
     continue-on-error: ${{ matrix.ruby == 'ruby-3.0.0-preview1' || endsWith(matrix.ruby, 'head') }}
     steps:
       - uses: actions/checkout@v2
