@@ -46,5 +46,5 @@ jobs:
         # Rails 4+ complains with a bundler rails binstub in PROJECT_ROOT/bin/
       # - run: rm -f bin/rails && bundle exec rails --version
         # env: ${{ matrix.env }}
-      - run: bundle install --binstubs --standalone && script/run_build
+      - run: bundle install --binstubs && script/run_build
         env: ${{ matrix.env }}
