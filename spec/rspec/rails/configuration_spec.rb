@@ -256,7 +256,7 @@ RSpec.describe "Configuration" do
     expect(example).to be_a(RSpec::Rails::FeatureExampleGroup)
   end
 
-  if defined?(ActionMailer)
+  if RSpec::Rails::FeatureCheck.has_action_mailer?
     it "metadata `type: :mailer` sets up mailer example groups" do
       a_mailer_class = Class.new
       stub_const "SomeMailer", a_mailer_class
@@ -265,7 +265,8 @@ RSpec.describe "Configuration" do
       expect(group.new).to be_a(RSpec::Rails::MailerExampleGroup)
     end
 
-    describe 'clears ActionMailer::Base::Deliveries after each example' do
+    # JRuby give us a uninitialized constant Mail::AddressList::Address on Github Actions
+    describe 'clears ActionMailer::Base::Deliveries after each example', skip: RSpec::Support::Ruby.jruby? do
       let(:mailer) do
         Class.new(ActionMailer::Base) do
           default from: 'from@example.com'
