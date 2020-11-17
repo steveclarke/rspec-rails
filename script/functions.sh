@@ -171,8 +171,6 @@ function check_documentation_coverage {
 
 function check_style_and_lint {
   echo "bin/rubocop"
-  eval "(exec bin/rubocop --version)"
-  unset RUBYOPT; bundle exec rubocop --config .rubocop.yml
   eval "(unset RUBYOPT; rm -rf tmp/*; exec bin/rubocop)"
 }
 
