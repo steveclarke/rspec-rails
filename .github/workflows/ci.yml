@@ -11,7 +11,7 @@ on:
       - '*'
 jobs:
   test:
-    name: Ruby ${{ matrix.ruby }}
+    name: 'Ruby: ${{ matrix.ruby }}, Rails: ${{ matrix.env.RAILS_VERSION }}'
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
