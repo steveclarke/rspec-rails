@@ -5,6 +5,7 @@ on:
       - 'main'
       - '*-maintenance'
       - '*-dev'
+      - 'github-actions' # to remove
   pull_request:
     branches:
       - '*'
