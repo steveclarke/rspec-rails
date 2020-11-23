@@ -38,10 +38,18 @@ module RSpec
 
       # @private
       def method_name
-        @method_name ||= [
-          self.class.name.underscore,
-          RSpec.current_example.description.underscore
-        ].join("_").tr(CHARS_TO_TRANSLATE.join, "_")[0...200] + "_#{rand(1000)}"
+        @method_name ||= begin
+          m = [
+            self.class.name.underscore,
+            RSpec.current_example.description.underscore
+          ].join("_").tr(CHARS_TO_TRANSLATE.join, "_")
+
+          if RbConfig::CONFIG["host_os"] =~ /linux/
+            m.byteslice(0...200).scrub("") + "_#{rand(1000)}"
+          else
+            m[0...200] + "_#{rand(1000)}"
+          end
+        end
       end
 
       # Delegates to `Rails.application`.

@@ -16,6 +16,17 @@ module RSpec::Rails
             expect(example.send(:method_name)).to start_with('method_name')
           end
         end
+
+        it 'slices long method name' do
+          group = RSpec::Core::ExampleGroup.describe ActionPack do
+            include SystemExampleGroup
+          end
+
+          example = group.new
+          example_class_mock = double('name' => 'あ'*100)
+          allow(example).to receive(:class).and_return(example_class_mock)
+          expect(example.send(:method_name).bytesize).to be <= 210
+        end
       end
 
       describe '#driver' do
