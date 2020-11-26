@@ -2,9 +2,7 @@ name: RSpec CI
 on:
   push:
     branches:
-      - 'main'
-      - '*-maintenance'
-      - '*-dev'
+      - '*'
   pull_request:
     branches:
       - '*'
