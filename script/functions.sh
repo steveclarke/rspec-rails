@@ -1,8 +1,8 @@
-# This file was generated on 2019-12-18T14:01:39+00:00 from the rspec-dev repo.
+# This file was generated on 2020-11-29T13:48:51+03:00 from the rspec-dev repo.
 # DO NOT modify it by hand as your changes will get lost the next time it is generated.
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $SCRIPT_DIR/travis_functions.sh
+source $SCRIPT_DIR/ci_functions.sh
 source $SCRIPT_DIR/predicate_functions.sh
 
 # If JRUBY_OPTS isn't set, use these.
@@ -12,7 +12,7 @@ SPECS_HAVE_RUN_FILE=specs.out
 MAINTENANCE_BRANCH=`cat maintenance-branch`
 
 # Don't allow rubygems to pollute what's loaded. Also, things boot faster
-# without the extra load time of rubygems. Only works on MRI Ruby 1.9+
+# without the extra load time of rubygems. Only works on MRI.
 if is_mri; then
   export RUBYOPT="--disable=gem"
 fi
@@ -158,8 +158,6 @@ function check_documentation_coverage {
     end
   "
 
-  echo "bin/yard doc --no-cache"
-
   # Some warnings only show up when generating docs, so do that as well.
   bin/yard doc --no-cache | ruby -e "
     while line = gets
@@ -176,14 +174,16 @@ function check_documentation_coverage {
 }
 
 function check_style_and_lint {
-  echo "bin/rubocop"
-  eval "(unset RUBYOPT; rm -rf tmp/*; exec bin/rubocop)"
+  echo "bin/rubocop lib"
+  eval "(unset RUBYOPT; exec bin/rubocop lib)"
 }
 
 function run_all_spec_suites {
   fold "rspec-core specs" run_spec_suite_for "rspec-core"
   fold "rspec-expectations specs" run_spec_suite_for "rspec-expectations"
   fold "rspec-mocks specs" run_spec_suite_for "rspec-mocks"
-  fold "rspec-rails specs" run_spec_suite_for "rspec-rails"
   fold "rspec-support specs" run_spec_suite_for "rspec-support"
+  if rspec_rails_compatible; then
+    fold "rspec-rails specs" run_spec_suite_for "rspec-rails"
+  fi
 }
